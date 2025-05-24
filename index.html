@@ -1,44 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Quiz</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #000428, #004e92);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .quiz-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .question {
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .options button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #ffffff22;
+      border: 1px solid #ffffff55;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .options button:hover {
+      background: #ffffff44;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .glitch {
+      font-family: monospace;
+      color: #0ff;
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 2px red; }
+      50% { text-shadow: -2px -2px lime; }
+      100% { text-shadow: 2px 2px red; }
+    }
+  </style>
 </head>
 <body>
+  <div class="quiz-container">
+    <h1 class="glitch">Quantum Quiz</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
 
-    <header>
-        <h1>Welcome to My Portfolio</h1>
-        <button id="theme-toggle">Switch Theme</button>
-    </header>
+  <script>
+    const quizData = [
+      {
+        question: "What element has the chemical symbol 'O'?",
+        options: ["Gold", "Oxygen", "Silver", "Iron"],
+        answer: "Oxygen"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Mars", "Venus", "Jupiter", "Neptune"],
+        answer: "Mars"
+      },
+      {
+        question: "Who wrote '1984'?",
+        options: ["Orwell", "Shakespeare", "Twain", "Hemingway"],
+        answer: "Orwell"
+      }
+    ];
 
-    <section class="hero">
-        <img src="assets/profile.jpg" alt="Profile Picture">
-        <h2>Hi, I'm Moyosore Afolabi</h2>
-        <p>Web Developer | Designer | Creative Thinker</p>
-    </section>
+    let current = 0;
+    let score = 0;
 
-    <section class="portfolio">
-        <h2>My Work</h2>
-        <div class="gallery">
-            <div class="item">Project 1</div>
-            <div class="item">Project 2</div>
-            <div class="item">Project 3</div>
-        </div>
-    </section>
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
 
-    <section class="contact">
-        <h2>Contact Me</h2>
-        <form id="contact-form">
-            <input type="text" placeholder="Your Name" required>
-            <input type="email" placeholder="Your Email" required>
-            <textarea placeholder="Your Message" required></textarea>
-            <button type="submit">Send</button>
-        </form>
-    </section>
+    function loadQuestion() {
+      const q = quizData[current];
+      document.getElementById("question").innerText = q.question;
+      const opts = document.getElementById("options");
+      opts.innerHTML = "";
+      let optionsShuffled = [...q.options];
+      shuffle(optionsShuffled);
+      optionsShuffled.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (opt === q.answer) {
+            score++;
+            document.getElementById("result").innerText = "Correct! ✔️";
+          } else {
+            document.getElementById("result").innerText = `Wrong! ❌ It was ${q.answer}`;
+          }
+          setTimeout(() => {
+            current++;
+            document.getElementById("result").innerText = "";
+            if (current < quizData.length) {
+              loadQuestion();
+            } else {
+              document.getElementById("quiz").innerHTML = `<h2 class='glitch'>Your Score: ${score}/${quizData.length}</h2>`;
+            }
+          }, 1500);
+        };
+        opts.appendChild(btn);
+      });
+    }
 
-    <script src="script.js"></script>
-
+    loadQuestion();
+  </script>
 </body>
 </html>
